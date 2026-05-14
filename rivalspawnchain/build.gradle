@@ -11,9 +11,8 @@ base {
 }
 
 repositories {
-    maven { name = "Cobblemon"; url = "https://maven.cobblemon.com/releases" }
-    maven { name = "Modrinth";  url = "https://api.modrinth.com/maven" }
-    maven { name = "FabricMC";  url = "https://maven.fabricmc.net/" }
+    maven { name = "Modrinth"; url = "https://api.modrinth.com/maven" }
+    maven { name = "FabricMC"; url = "https://maven.fabricmc.net/" }
 }
 
 dependencies {
@@ -21,7 +20,7 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "maven.modrinth:cobblemon:1.7.3+1.21.1-fabric"
+    modImplementation "maven.modrinth:cobblemon:kF7CvxTo"
 }
 
 java {
