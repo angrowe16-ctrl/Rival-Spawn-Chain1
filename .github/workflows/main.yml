@@ -12,8 +12,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - run: chmod +x gradlew && ./gradlew build --no-daemon
+      - name: Build
+        run: |
+          cd rivalspawnchain
+          chmod +x gradlew
+          ./gradlew build --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: rivalspawnchain-jar
-          path: build/libs/rivalspawnchain-*.jar
+          path: rivalspawnchain/build/libs/rivalspawnchain-*.jar
