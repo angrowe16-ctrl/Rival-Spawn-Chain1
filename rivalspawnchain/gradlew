@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# Gradle start-up script (Unix)
+#
+
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+GRADLE_HOME="${GRADLE_USER_HOME:-$HOME/.gradle}"
+
+exec java -jar "$SCRIPT_DIR/gradle/wrapper/gradle-wrapper.jar" "$@"
