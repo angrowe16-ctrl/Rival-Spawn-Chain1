@@ -3,7 +3,6 @@ package com.rivalspawnchain.shiny;
 import com.rivalspawnchain.chain.ChainManager;
 import com.rivalspawnchain.chain.PlayerChainData;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
@@ -20,7 +19,7 @@ public class ShinyHandler {
             var pokemon = pokemonEntity.getPokemon();
             if (pokemon.getShiny()) return;
 
-            String species = pokemon.getSpecies().name().toLowerCase();
+            String species = pokemon.getSpecies().getName().toLowerCase();
 
             for (ServerPlayerEntity player : world.getPlayers()) {
                 PlayerChainData data = ChainManager.INSTANCE.get(player.getUuid());
