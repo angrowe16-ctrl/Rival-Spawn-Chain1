@@ -23,17 +23,27 @@ public class PokeNavOverlay {
         int    ko      = ClientChainCache.getKoCount();
         int    denom   = ClientChainCache.getShinyDenominator();
         String line1   = "Chain: " + species + " x" + ko;
-        String line2   = "Shiny: 1/" + denom;
+        String line2   = "Spawn: " + spawnLabel(ko);
+        String line3   = "Shiny: 1/" + denom;
         int    color   = shinyColor(ko);
         int    sw      = ctx.getScaledWindowWidth();
         int    sh      = ctx.getScaledWindowHeight();
         int    fh      = mc.textRenderer.fontHeight;
         int    x       = sw - mc.textRenderer.getWidth(line1) - MARGIN - 2;
-        int    y       = sh - (fh * 2) - MARGIN - 4;
+        int    y       = sh - (fh * 3) - MARGIN - 4;
 
-        ctx.fill(x - 2, y - 2, sw - MARGIN, y + fh * 2 + 2, 0x88000000);
-        ctx.drawText(mc.textRenderer, Text.literal(line1), x, y,          0xFFFFFF, true);
-        ctx.drawText(mc.textRenderer, Text.literal(line2), x, y + fh + 1, color,   true);
+        ctx.fill(x - 2, y - 2, sw - MARGIN, y + fh * 3 + 2, 0x88000000);
+        ctx.drawText(mc.textRenderer, Text.literal(line1), x, y,               0xFFFFFF, true);
+        ctx.drawText(mc.textRenderer, Text.literal(line2), x, y + fh + 1,      0x55FFFF, true);
+        ctx.drawText(mc.textRenderer, Text.literal(line3), x, y + fh * 2 + 2,  color,   true);
+    }
+
+    private static String spawnLabel(int ko) {
+        if (ko >= 50) return "10x boosted";
+        if (ko >= 25) return "5x boosted";
+        if (ko >= 15) return "3x boosted";
+        if (ko >= 5)  return "2x boosted";
+        return "normal";
     }
 
     private static int shinyColor(int ko) {
