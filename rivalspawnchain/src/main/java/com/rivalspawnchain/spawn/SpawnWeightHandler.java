@@ -1,8 +1,6 @@
 package com.rivalspawnchain.spawn;
 
-// Spawn weight boosting is handled via SpawnInflator registered in RivalSpawnChain
+// Spawn flooding is handled in RivalSpawnChain.java via entity despawning
 public class SpawnWeightHandler {
-    public static void register() {
-        // See RivalSpawnChain.java for spawn logic
-    }
+    public static void register() {}
 }
