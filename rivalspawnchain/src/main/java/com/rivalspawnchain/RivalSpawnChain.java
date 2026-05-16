@@ -1,26 +1,24 @@
 package com.rivalspawnchain;
 
-import com.cobblemon.mod.common.api.spawning.CobblemonSpawnPools;
 import com.rivalspawnchain.chain.ChainManager;
+import com.rivalspawnchain.chain.PlayerChainData;
 import com.rivalspawnchain.command.ChainCommand;
 import com.rivalspawnchain.compat.PlayerEventListener;
 import com.rivalspawnchain.network.NetworkHandler;
 import com.rivalspawnchain.shiny.ShinyHandler;
-import com.rivalspawnchain.spawn.SpawnWeightHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.rivalspawnchain.chain.PlayerChainData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RivalSpawnChain implements ModInitializer {
 
     public static final String MOD_ID = "rivalspawnchain";
-    public static final Logger LOGGER  = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override
     public void onInitialize() {
@@ -30,33 +28,25 @@ public class RivalSpawnChain implements ModInitializer {
         ShinyHandler.register();
         PlayerEventListener.register();
 
-        // Aggressive spawn flooding via entity load hook
+        // Flood spawns: despawn non-chain species near chaining players
+        // AND boost chain species by leaving spawn slots open for them
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (!(entity instanceof PokemonEntity pe)) return;
             String species = pe.getPokemon().getSpecies().getName().toLowerCase();
 
             for (ServerPlayerEntity player : world.getPlayers()) {
                 PlayerChainData data = ChainManager.INSTANCE.get(player.getUuid());
-                if (data.getKoCount() <= 0) continue;
-                if (!data.getChainSpecies().equalsIgnoreCase(species)) continue;
-
-                // Already the right species — nothing to do, it spawned naturally
-                // The flooding happens by despawning non-chain spawns
-                break;
-            }
-
-            // Despawn non-chained species near a chaining player
-            for (ServerPlayerEntity player : world.getPlayers()) {
-                PlayerChainData data = ChainManager.INSTANCE.get(player.getUuid());
                 if (data.getKoCount() < 5) continue;
-                if (data.getChainSpecies().equalsIgnoreCase(species)) continue;
 
-                double dist = player.squaredDistanceTo(entity);
-                if (dist > 1024) continue; // only within 32 blocks
+                double dist = entity.squaredDistanceTo(player);
+                if (dist > 1024) continue; // 32 block radius
 
+                // If it's the chain species, keep it — maybe boost shiny roll
+                if (data.getChainSpecies().equalsIgnoreCase(species)) break;
+
+                // Not the chain species — despawn it based on chain length
                 float roll = (float) Math.random();
-                float despawnChance = getDespawnChance(data.getKoCount());
-                if (roll < despawnChance) {
+                if (roll < getDespawnChance(data.getKoCount())) {
                     entity.discard();
                 }
                 break;
@@ -73,10 +63,10 @@ public class RivalSpawnChain implements ModInitializer {
     }
 
     private static float getDespawnChance(int ko) {
-        if (ko >= 50) return 0.95f; // 95% of other species despawn = chain floods area
-        if (ko >= 25) return 0.80f;
-        if (ko >= 15) return 0.60f;
-        if (ko >= 5)  return 0.35f;
+        if (ko >= 50) return 0.97f; // 97% of other species gone = L8Games flood
+        if (ko >= 25) return 0.85f;
+        if (ko >= 15) return 0.65f;
+        if (ko >= 5)  return 0.40f;
         return 0.0f;
     }
 }
