@@ -40,11 +40,14 @@ public class PlayerChainData {
      * Additive spawn-weight bonus factor.
      * +1 % per KO, capped at MAX_WEIGHT_BONUS (i.e. 1000 KOs → ×10).
      */
-    public double getSpawnWeightMultiplier() {
-        if (chainSpecies.isEmpty()) return 1.0;
-        double bonus = 1.0 + (koCount / 100.0);
-        return Math.min(bonus, MAX_WEIGHT_BONUS);
-    }
+ public double getSpawnWeightMultiplier() {
+    if (chainSpecies.isEmpty()) return 1.0;
+    if (koCount >= 50) return 10.0;
+    if (koCount >= 25) return 5.0;
+    if (koCount >= 15) return 3.0;
+    if (koCount >= 5)  return 2.0;
+    return 1.0;
+}
 
     // ── Mutation ─────────────────────────────────────────────────────────────
 
